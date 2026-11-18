@@ -12,41 +12,15 @@ public class ResourcePool : MonoBehaviour
     [SerializeField] private int _initialPoolSize = 5;
 
     private Dictionary<ResourceType, Queue<GameObject>> _pools = new Dictionary<ResourceType, Queue<GameObject>>();
-
     private Dictionary<GameObject, ResourceType> _objectToType = new Dictionary<GameObject, ResourceType>();
-
-    private void Awake()
-    {
-        InitializePools();
-    }
-
-    private void InitializePools()
-    {
-        _pools[ResourceType.Coal] = new Queue<GameObject>();
-        _pools[ResourceType.Iron] = new Queue<GameObject>();
-        _pools[ResourceType.Copper] = new Queue<GameObject>();
-
-        CreatePoolObjects(ResourceType.Coal, _coalPrefab);
-        CreatePoolObjects(ResourceType.Iron, _ironPrefab);
-        CreatePoolObjects(ResourceType.Copper, _copperPrefab);
-    }
-
-    private void CreatePoolObjects(ResourceType type, GameObject prefab)
-    {
-        for (int i = 0; i < _initialPoolSize; i++)
-        {
-            GameObject obj = Instantiate(prefab, transform);
-            obj.SetActive(false);
-            
-            _pools[type].Enqueue(obj);
-            _objectToType[obj] = type;
-        }
-    }
 
     public GameObject Get(ResourceType type, Vector3 position)
     {
         GameObject prefab = GetPrefab(type);
-        if (prefab == null) return null;
+        if (prefab == null)
+        {
+            return null;
+        }
 
         GameObject obj;
 
@@ -70,7 +44,10 @@ public class ResourcePool : MonoBehaviour
 
     public void Return(GameObject obj)
     {
-        if (obj == null) return;
+        if (obj == null)
+        {
+            return;
+        }
 
         if (!_objectToType.ContainsKey(obj))
         {
@@ -82,12 +59,42 @@ public class ResourcePool : MonoBehaviour
         ResourceType type = _objectToType[obj];
 
         obj.transform.SetParent(transform);
-        obj.transform.localPosition = Vector3.zero;
-        obj.transform.localRotation = Quaternion.identity;
-        obj.transform.localScale = Vector3.one;
         obj.SetActive(false);
-
         _pools[type].Enqueue(obj);
+    }
+
+    private void Awake()
+    {
+        InitializePools();
+    }
+
+    private void InitializePools()
+    {
+        _pools[ResourceType.Coal] = new Queue<GameObject>();
+        _pools[ResourceType.Iron] = new Queue<GameObject>();
+        _pools[ResourceType.Copper] = new Queue<GameObject>();
+
+        CreatePoolObjects(ResourceType.Coal, _coalPrefab);
+        CreatePoolObjects(ResourceType.Iron, _ironPrefab);
+        CreatePoolObjects(ResourceType.Copper, _copperPrefab);
+    }
+
+    private void CreatePoolObjects(ResourceType type, GameObject prefab)
+    {
+        if (prefab == null)
+        {
+            Debug.LogError($"[ResourcePool] Не задан префаб для ресурса {type}", this);
+            return;
+        }
+
+        for (int i = 0; i < _initialPoolSize; i++)
+        {
+            GameObject obj = Instantiate(prefab, transform);
+            obj.SetActive(false);
+
+            _pools[type].Enqueue(obj);
+            _objectToType[obj] = type;
+        }
     }
 
     private GameObject GetPrefab(ResourceType type)

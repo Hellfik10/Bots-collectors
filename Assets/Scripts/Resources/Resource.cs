@@ -2,5 +2,5 @@ using UnityEngine;
 
 public abstract class Resource : MonoBehaviour
 {
-    public abstract ResourceType Type { get;}
+    public abstract ResourceType Type { get; }
 }

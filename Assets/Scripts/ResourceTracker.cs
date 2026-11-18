@@ -7,32 +7,32 @@ public class ResourceTracker : MonoBehaviour
     private List<Resource> _busyResources = new List<Resource>();
 
     public bool HasFreeResources => _freeResources.Count > 0;
-
     public int FreeResourcesCount => _freeResources.Count;
-
     public int BusyResourcesCount => _busyResources.Count;
 
-    public void RegisterResource(Resource resource)
+    public bool RegisterResource(Resource resource)
     {
         if (resource == null)
         {
             Debug.LogWarning("[ResourceTracker] Попытка зарегистрировать null-ресурс");
-            return;
+            return false;
         }
 
         if (_freeResources.Contains(resource) || _busyResources.Contains(resource))
         {
-            Debug.LogWarning($"[ResourceTracker] Ресурс {resource.name} уже зарегистрирован");
-            return;
+            return false;
         }
 
         _freeResources.Add(resource);
+        return true;
     }
 
     public Resource GetFreeResource()
     {
         if (_freeResources.Count == 0)
+        {
             return null;
+        }
 
         Resource resource = _freeResources[0];
         _freeResources.RemoveAt(0);

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 917759224898393274}
   - component: {fileID: 1586691024051470375}
   - component: {fileID: 1291733002441883443}
+  - component: {fileID: 1291733002441883444}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -127,5 +128,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eb1495c65518bf438b85cd611241151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bot
+--- !u!114 &1291733002441883444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7089018686737490370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 940fc71b73284c05a5be9925ed48cfd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitMovement
   _speed: 7
   _stopDistance: 0.2

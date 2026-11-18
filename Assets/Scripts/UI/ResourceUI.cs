@@ -7,38 +7,62 @@ public class ResourceUI : MonoBehaviour
     [Header("Ссылки")]
     [SerializeField] private Base _base;
 
-    [Header("Текстовые поля")]
-    [SerializeField] private TextMeshProUGUI _coalText;
-    [SerializeField] private TextMeshProUGUI _ironText;
-    [SerializeField] private TextMeshProUGUI _copperText;
+    [Header("Текстовое поле")]
+    [SerializeField] private TextMeshProUGUI _label;
 
-    private void Start()
+    private void OnEnable()
     {
-         _base.OnResourceCountChanged += HandleResourceCountChanged;
-
-        _coalText.text = $"Уголь: 0";
-        _ironText.text = $"Железо: 0";
-        _copperText.text = $"Медь: 0";
+        if (_base != null && _label != null)
+        {
+            _base.OnResourceCountChanged += HandleResourceCountChanged;
+            UpdateState();
+        }
     }
 
     private void OnDisable()
     {
-        _base.OnResourceCountChanged -= HandleResourceCountChanged;
+        if (_base != null)
+        {
+            _base.OnResourceCountChanged -= HandleResourceCountChanged;
+        }
     }
 
     private void HandleResourceCountChanged(ResourceType type, int newCount)
     {
-        switch (type)
+        UpdateState();
+    }
+
+    private void UpdateState()
+    {
+        if (_base == null || _label == null) return;
+
+        bool hasAnyResources = false;
+        string displayText = "";
+
+        var types = _base.AvailableTypes;
+        
+        for (int i = 0; i < types.Count; i++)
         {
-            case ResourceType.Coal:
-                _coalText.text = $"Уголь: {newCount}";
-                break;
-            case ResourceType.Iron:
-                _ironText.text = $"Железо: {newCount}";
-                break;
-            case ResourceType.Copper:
-                _copperText.text = $"Медь: {newCount}";
-                break;
+            ResourceType type = types[i];
+            int count = _base.GetResourceCount(type);
+
+            if (count > 0)
+            {
+                hasAnyResources = true;
+            }
+
+            if (i > 0)
+            {
+                displayText += "\n";
+            }
+            displayText += $"{type}: {count}";
+        }
+
+        _label.gameObject.SetActive(hasAnyResources);
+
+        if (hasAnyResources)
+        {
+            _label.text = displayText;
         }
     }
 }
