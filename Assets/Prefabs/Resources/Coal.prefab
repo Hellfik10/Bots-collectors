@@ -122,6 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8395146924077644891}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f674dd0b81002f4dbc78a3e225923ba, type: 3}
+  m_Script: {fileID: 11500000, guid: d50c8da0557c9754a8e7974a8e05b41f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Coal
+  m_EditorClassIdentifier: Assembly-CSharp::Resource
+  _type: 0

@@ -6,9 +6,11 @@ public class ResourceScanner : MonoBehaviour
     [SerializeField] private ResourceTracker _tracker;
     [SerializeField] private float _scanRadius = 45f;
     [SerializeField] private float _scanInterval = 0.5f;
+    private WaitForSeconds _scanIntervalWait;
 
     private void Start()
     {
+        _scanIntervalWait = new WaitForSeconds(_scanInterval);
         StartCoroutine(ScanRoutine());
     }
 
@@ -17,7 +19,7 @@ public class ResourceScanner : MonoBehaviour
         while (enabled)
         {
             Scan();
-            yield return new WaitForSeconds(_scanInterval);
+            yield return _scanIntervalWait;
         }
     }
 

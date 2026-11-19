@@ -4,7 +4,7 @@ using UnityEngine;
 public class BaseUnitManager : MonoBehaviour
 {
     [SerializeField] private ResourceTracker _tracker;
-    [SerializeField] private GameObject _unitPrefab;
+    [SerializeField] private Unit _unitPrefab;
     [SerializeField] private int _startingUnitsCount = 3;
 
     private readonly List<Unit> _freeUnits = new List<Unit>();
@@ -50,14 +50,7 @@ public class BaseUnitManager : MonoBehaviour
             Vector3 spawnPosition = transform.position + UnityEngine.Random.insideUnitSphere * 2f;
             spawnPosition.y = 1f;
 
-            GameObject unitObject = Instantiate(_unitPrefab, spawnPosition, Quaternion.identity);
-            if (!unitObject.TryGetComponent(out Unit unit))
-            {
-                Debug.LogError("[BaseUnitManager] В префабе юнита отсутствует компонент Unit", unitObject);
-                Destroy(unitObject);
-                continue;
-            }
-
+            Unit unit = Instantiate(_unitPrefab, spawnPosition, Quaternion.identity);
             unit.Initialize(_homeBase);
             unit.OnBecameFree += OnUnitBecameFree;
             _freeUnits.Add(unit);

@@ -119,54 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &112180786
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 112180787}
-  - component: {fileID: 112180788}
-  m_Layer: 0
-  m_Name: ResourcePool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &112180787
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112180786}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 936669235}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &112180788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112180786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdce4000d8c278542b3eb7cb4c1b5a2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ResourcePool
-  _coalPrefab: {fileID: 8395146924077644891, guid: ed41e867fe3eac94e99e872f1a0e9ec2, type: 3}
-  _ironPrefab: {fileID: 3192822117903188286, guid: 31ec954ed9a0fe5449c543d76e7d535e, type: 3}
-  _copperPrefab: {fileID: 6609575485173102252, guid: d76a525237d950842934938ff3a256c5, type: 3}
-  _initialPoolSize: 10
 --- !u!1 &134288137
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +573,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 134288138}
-  - {fileID: 112180787}
   m_Father: {fileID: 1452310364}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &936669236
@@ -637,9 +588,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawner
   _spawnZone: {fileID: 134288138}
-  _pool: {fileID: 112180788}
+  _coalPrefab: {fileID: 2035792170552282296, guid: ed41e867fe3eac94e99e872f1a0e9ec2, type: 3}
+  _ironPrefab: {fileID: 6564163833241615860, guid: 31ec954ed9a0fe5449c543d76e7d535e, type: 3}
+  _copperPrefab: {fileID: 5512475461750879666, guid: d76a525237d950842934938ff3a256c5, type: 3}
   _spawnAreaSize: {x: 25, y: 20}
   _spawnInterval: 2
+  _initialPoolSize: 10
 --- !u!1 &1039685109
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,7 +843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Base
   _tracker: {fileID: 1039685110}
-  _pool: {fileID: 112180788}
+  _spawner: {fileID: 936669236}
 --- !u!114 &1503406462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -918,7 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseUnitManager
   _tracker: {fileID: 1039685110}
-  _unitPrefab: {fileID: 7089018686737490370, guid: 4568be61aa77c9b4b8868d2085197692, type: 3}
+  _unitPrefab: {fileID: 1291733002441883443, guid: 4568be61aa77c9b4b8868d2085197692, type: 3}
   _startingUnitsCount: 3
 --- !u!114 &1503406464
 MonoBehaviour:

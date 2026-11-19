@@ -7,7 +7,7 @@ public class Base : MonoBehaviour
 {
     [Header("Ссылки")]
     [SerializeField] private ResourceTracker _tracker;
-    [SerializeField] private ResourcePool _pool;
+    [SerializeField] private ResourceSpawner _spawner;
 
     private BaseUnitManager _unitManager;
     private BaseResourceStorage _storage;
@@ -37,7 +37,7 @@ public class Base : MonoBehaviour
     {
         ResourceType type = resource.Type;
         _tracker.MarkAsCollected(resource);
-        _pool.Return(resource.gameObject);
+        _spawner.ReturnResource(resource);
         _storage.AddResource(type);
     }
 

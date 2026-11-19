@@ -1,6 +1,13 @@
 using UnityEngine;
 
-public abstract class Resource : MonoBehaviour
+public class Resource : MonoBehaviour
 {
-    public abstract ResourceType Type { get; }
+    [SerializeField] private ResourceType _type;
+
+    public ResourceType Type => _type;
+
+    public void Initialize(ResourceType type)
+    {
+        _type = type;
+    }
 }
