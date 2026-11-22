@@ -844,6 +844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Base
   _tracker: {fileID: 1039685110}
   _spawner: {fileID: 936669236}
+  _mapCollider: {fileID: 1808559506}
 --- !u!114 &1503406462
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,11 @@ public class UnitMovement : MonoBehaviour
         _target = target;
     }
 
+    public void StopMoving()
+    {
+        _target = null;
+    }
+
     private void Update()
     {
         if (_target == null)
