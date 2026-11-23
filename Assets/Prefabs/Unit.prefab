@@ -139,6 +139,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 940fc71b73284c05a5be9925ed48cfd5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitMovement
+  m_EditorClassIdentifier: Assembly-CSharp::Mover
   _speed: 7
   _stopDistance: 0.2

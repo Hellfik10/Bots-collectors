@@ -1,68 +1,65 @@
-using UnityEngine;
+using System.Collections.Generic;
 using TMPro;
-using System;
+using UnityEngine;
 
 public class ResourceUI : MonoBehaviour
 {
     [Header("Ссылки")]
-    [SerializeField] private Base _base;
-
-    [Header("Текстовое поле")]
+    [SerializeField] private BaseResourceStorage _storage;
     [SerializeField] private TextMeshProUGUI _label;
 
     private void OnEnable()
     {
-        if (_base != null && _label != null)
+        if (_storage == null || _label == null)
         {
-            _base.OnResourceCountChanged += HandleResourceCountChanged;
-            UpdateState();
+            return;
         }
+
+        _storage.OnResourceCountChanged += UpdateState;
+
+        IReadOnlyList<ResourceType> types = _storage.AvailableTypes;
+        if (types.Count == 0)
+        {
+            _label.text = string.Empty;
+            _label.enabled = true;
+            return;
+        }
+
+        ResourceType firstType = types[0];
+        UpdateState(firstType, _storage.GetResourceCount(firstType));
     }
 
     private void OnDisable()
     {
-        if (_base != null)
+        if (_storage != null)
         {
-            _base.OnResourceCountChanged -= HandleResourceCountChanged;
+            _storage.OnResourceCountChanged -= UpdateState;
         }
     }
 
-    private void HandleResourceCountChanged(ResourceType type, int newCount)
+    private void UpdateState(ResourceType changedType, int newCount)
     {
-        UpdateState();
-    }
+        if (_storage == null || _label == null)
+        {
+            return;
+        }
 
-    private void UpdateState()
-    {
-        if (_base == null || _label == null) return;
-
-        bool hasAnyResources = false;
-        string displayText = "";
-
-        var types = _base.AvailableTypes;
-        
+        IReadOnlyList<ResourceType> types = _storage.AvailableTypes;
+        string displayText = string.Empty;
         for (int i = 0; i < types.Count; i++)
         {
             ResourceType type = types[i];
-            int count = _base.GetResourceCount(type);
-
-            if (count > 0)
-            {
-                hasAnyResources = true;
-            }
+            int count = type == changedType ? newCount : _storage.GetResourceCount(type);
 
             if (i > 0)
             {
                 displayText += "\n";
             }
+
             displayText += $"{type}: {count}";
         }
 
-        _label.gameObject.SetActive(hasAnyResources);
-
-        if (hasAnyResources)
-        {
-            _label.text = displayText;
-        }
+        _label.text = displayText;
+        _label.enabled = true;
     }
 }

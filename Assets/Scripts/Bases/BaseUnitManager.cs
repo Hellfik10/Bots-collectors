@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ResourceScanner), typeof(BaseResourceStorage), typeof(BaseResourceCollector))]
+[RequireComponent(typeof(BaseExpansionController))]
 public class BaseUnitManager : MonoBehaviour
 {
     private const int ResourcesPerUnit = 3;
     private const int ResourcesPerBase = 5;
 
-    [SerializeField] private ResourceTracker _tracker;
     [SerializeField] private Unit _unitPrefab;
     [SerializeField] private int _startingUnitsCount = 3;
 
     private readonly List<Unit> _freeUnits = new List<Unit>();
-    private Base _homeBase;
+    private ResourceTracker _tracker;
+    private BaseResourceStorage _storage;
+    private BaseResourceCollector _resourceCollector;
     private GameObject _expansionFlag;
     private int _ownedUnitsCount;
     private bool _spawnInitialUnits = true;
@@ -19,7 +22,9 @@ public class BaseUnitManager : MonoBehaviour
 
     private void Awake()
     {
-        _homeBase = GetComponent<Base>();
+        _storage = GetComponent<BaseResourceStorage>();
+        _resourceCollector = GetComponent<BaseResourceCollector>();
+        _tracker = _resourceCollector.Tracker;
     }
 
     private void Start()
@@ -43,9 +48,9 @@ public class BaseUnitManager : MonoBehaviour
             return;
         }
 
-        while (_homeBase.TotalResourceCount >= ResourcesPerUnit)
+        while (_storage.TotalResourceCount >= ResourcesPerUnit)
         {
-            if (!_homeBase.TrySpendResources(ResourcesPerUnit))
+            if (_storage.TrySpendResources(ResourcesPerUnit) == false)
             {
                 break;
             }
@@ -75,7 +80,7 @@ public class BaseUnitManager : MonoBehaviour
         _spawnInitialUnits = false;
         _ownedUnitsCount = 1;
         RegisterFreeUnit(founder);
-        founder.TransferToBase(_homeBase);
+        founder.TransferToBase(_resourceCollector);
     }
 
     private void TryAssignExpansionTask()
@@ -85,10 +90,10 @@ public class BaseUnitManager : MonoBehaviour
             return;
         }
 
-        if (_homeBase.TotalResourceCount >= ResourcesPerBase)
+        if (_storage.TotalResourceCount >= ResourcesPerBase)
         {
             if (_ownedUnitsCount > 1 && _freeUnits.Count > 0 &&
-                _homeBase.TrySpendResources(ResourcesPerBase))
+                _storage.TrySpendResources(ResourcesPerBase))
             {
                 Unit founder = TakeFreeUnit();
                 _expansionInProgress = true;
@@ -103,7 +108,7 @@ public class BaseUnitManager : MonoBehaviour
 
     private void AssignResourceTask()
     {
-        if (_freeUnits.Count == 0 || !_tracker.HasFreeResources)
+        if (_freeUnits.Count == 0 || _tracker.HasFreeResources == false)
         {
             return;
         }
@@ -140,7 +145,7 @@ public class BaseUnitManager : MonoBehaviour
         spawnPosition.y = 1f;
 
         Unit unit = Instantiate(_unitPrefab, spawnPosition, Quaternion.identity);
-        unit.Initialize(_homeBase);
+        unit.Initialize(_resourceCollector);
         _ownedUnitsCount++;
         RegisterFreeUnit(unit);
     }
@@ -149,7 +154,7 @@ public class BaseUnitManager : MonoBehaviour
     {
         unit.OnBecameFree -= OnUnitBecameFree;
         unit.OnBecameFree += OnUnitBecameFree;
-        if (!_freeUnits.Contains(unit))
+        if (_freeUnits.Contains(unit) == false)
         {
             _freeUnits.Add(unit);
         }
@@ -157,7 +162,7 @@ public class BaseUnitManager : MonoBehaviour
 
     private void OnUnitBecameFree(Unit unit)
     {
-        if (!_freeUnits.Contains(unit))
+        if (_freeUnits.Contains(unit) == false)
         {
             _freeUnits.Add(unit);
         }
@@ -168,8 +173,8 @@ public class BaseUnitManager : MonoBehaviour
     private void BuildExpansionBase(Unit founder)
     {
         Vector3 position = _expansionFlag.transform.position;
-        position.y = _homeBase.transform.position.y;
-        Base newBase = Instantiate(_homeBase, position, Quaternion.identity);
+        position.y = transform.position.y;
+        BaseUnitManager newBase = Instantiate(this, position, Quaternion.identity);
         GameObject completedFlag = _expansionFlag;
 
         founder.OnBecameFree -= OnUnitBecameFree;

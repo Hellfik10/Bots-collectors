@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,27 +6,30 @@ public class ResourceSpawner : MonoBehaviour
 {
     [Header("Ссылки")]
     [SerializeField] private Transform _spawnZone;
-    [SerializeField] private Resource _coalPrefab;
-    [SerializeField] private Resource _ironPrefab;
-    [SerializeField] private Resource _copperPrefab;
+    [SerializeField] private ResourceSpawnConfig[] _resourceConfigs = new ResourceSpawnConfig[0];
 
     [Header("Настройки зоны спавна")]
     [SerializeField] private Vector2 _spawnAreaSize = new Vector2(30f, 15f);
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private int _initialPoolSize = 5;
 
-    private static readonly ResourceType[] ResourceTypes = (ResourceType[])Enum.GetValues(typeof(ResourceType));
-    private readonly Dictionary<ResourceType, Resource> _prefabs = new Dictionary<ResourceType, Resource>();
+    private readonly Dictionary<ResourceType, ResourceSpawnConfig> _configsByType =
+        new Dictionary<ResourceType, ResourceSpawnConfig>();
     private readonly Dictionary<ResourceType, ResourcePool<Resource>> _pools =
         new Dictionary<ResourceType, ResourcePool<Resource>>();
+    private readonly List<ResourceType> _spawnableTypes = new List<ResourceType>();
     private WaitForSeconds _spawnIntervalWait;
+
+    private static readonly WaitForSeconds InitialDelay = new WaitForSeconds(1f);
 
     private void Awake()
     {
         _spawnIntervalWait = new WaitForSeconds(_spawnInterval);
-        InitializePool(ResourceType.Coal, _coalPrefab);
-        InitializePool(ResourceType.Iron, _ironPrefab);
-        InitializePool(ResourceType.Copper, _copperPrefab);
+
+        for (int i = 0; i < _resourceConfigs.Length; i++)
+        {
+            InitializePool(_resourceConfigs[i]);
+        }
     }
 
     private void Start()
@@ -41,23 +43,20 @@ public class ResourceSpawner : MonoBehaviour
 
         while (enabled)
         {
-            SpawnResource();
+            ResourceType type = _spawnableTypes[UnityEngine.Random.Range(0, _spawnableTypes.Count)];
+            Spawn(type, GetRandomSpawnPosition());
             yield return _spawnIntervalWait;
         }
     }
 
-    private static readonly WaitForSeconds InitialDelay = new WaitForSeconds(1f);
-
-    private void SpawnResource()
+    private Vector3 GetRandomSpawnPosition()
     {
         Vector3 zoneCenter = _spawnZone.position;
-        Vector3 spawnPosition = new Vector3(
+        return new Vector3(
             zoneCenter.x + UnityEngine.Random.Range(-_spawnAreaSize.x / 2f, _spawnAreaSize.x / 2f),
             0.5f,
             zoneCenter.z + UnityEngine.Random.Range(-_spawnAreaSize.y / 2f, _spawnAreaSize.y / 2f)
         );
-        ResourceType type = ResourceTypes[UnityEngine.Random.Range(0, ResourceTypes.Length)];
-        Spawn(type, spawnPosition);
     }
 
     public void ReturnResource(Resource resource)
@@ -67,9 +66,8 @@ public class ResourceSpawner : MonoBehaviour
             return;
         }
 
-        if (!_pools.TryGetValue(resource.Type, out ResourcePool<Resource> pool))
+        if (_pools.TryGetValue(resource.Type, out ResourcePool<Resource> pool) == false)
         {
-            Debug.LogWarning($"[ResourceSpawner] Ресурс {resource.name} не принадлежит спавнеру", resource);
             Destroy(resource.gameObject);
             return;
         }
@@ -81,16 +79,20 @@ public class ResourceSpawner : MonoBehaviour
 
     private Resource Spawn(ResourceType type, Vector3 position)
     {
-        if (!_prefabs.TryGetValue(type, out Resource prefab))
+        if (_configsByType.TryGetValue(type, out ResourceSpawnConfig config) == false)
         {
-            Debug.LogError($"[ResourceSpawner] Не задан префаб для ресурса {type}", this);
             return null;
         }
 
-        ResourcePool<Resource> pool = _pools[type];
-        if (!pool.TryTake(out Resource resource))
+        if (_pools.TryGetValue(type, out ResourcePool<Resource> pool) == false)
         {
-            resource = Instantiate(prefab, transform);
+            return null;
+        }
+
+        Resource resource;
+        if (pool.TryTake(out resource) == false)
+        {
+            resource = Instantiate(config.Prefab, transform);
             resource.Initialize(type);
         }
 
@@ -101,22 +103,18 @@ public class ResourceSpawner : MonoBehaviour
         return resource;
     }
 
-    private void InitializePool(ResourceType type, Resource prefab)
+    private void InitializePool(ResourceSpawnConfig config)
     {
-        if (prefab == null)
-        {
-            Debug.LogError($"[ResourceSpawner] Не задан префаб для ресурса {type}", this);
-            return;
-        }
+        _configsByType.Add(config.Type, config);
+        _spawnableTypes.Add(config.Type);
 
-        _prefabs.Add(type, prefab);
         ResourcePool<Resource> pool = new ResourcePool<Resource>();
-        _pools.Add(type, pool);
+        _pools.Add(config.Type, pool);
 
         for (int i = 0; i < _initialPoolSize; i++)
         {
-            Resource resource = Instantiate(prefab, transform);
-            resource.Initialize(type);
+            Resource resource = Instantiate(config.Prefab, transform);
+            resource.Initialize(config.Type);
             resource.gameObject.SetActive(false);
             pool.Store(resource);
         }

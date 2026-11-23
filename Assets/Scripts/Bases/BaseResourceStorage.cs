@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BaseResourceStorage : MonoBehaviour
@@ -10,19 +11,7 @@ public class BaseResourceStorage : MonoBehaviour
 
     public event Action<ResourceType, int> OnResourceCountChanged;
     public IReadOnlyList<ResourceType> AvailableTypes => ResourceTypes;
-    public int TotalResourceCount
-    {
-        get
-        {
-            int total = 0;
-            foreach (int count in _collectedResources.Values)
-            {
-                total += count;
-            }
-
-            return total;
-        }
-    }
+    public int TotalResourceCount => _collectedResources.Values.Sum();
 
     private void Awake()
     {
@@ -39,9 +28,8 @@ public class BaseResourceStorage : MonoBehaviour
 
     public void AddResource(ResourceType type)
     {
-        if (!_collectedResources.ContainsKey(type))
+        if (_collectedResources.ContainsKey(type) == false)
         {
-            Debug.LogWarning($"[BaseResourceStorage] Неизвестный тип ресурса: {type}", this);
             return;
         }
 
@@ -53,7 +41,6 @@ public class BaseResourceStorage : MonoBehaviour
     {
         if (amount <= 0)
         {
-            Debug.LogWarning($"[BaseResourceStorage] Некорректное количество ресурсов для списания: {amount}", this);
             return false;
         }
 

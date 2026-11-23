@@ -241,6 +241,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -366,6 +367,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+    m_ObjectHideFlags: 0
+    m_CorrespondingSourceObject: {fileID: 0}
+    m_PrefabInstance: {fileID: 0}
+    m_PrefabAsset: {fileID: 0}
+    m_GameObject: {fileID: 330585543}
+    m_Enabled: 1
+    m_EditorHideFlags: 0
+    m_Script: {fileID: 11500000, guid: 30d818d8fbea4dcdac42d48f3e941f32, type: 3}
+    m_Name: ""
+    m_EditorClassIdentifier: Assembly-CSharp::BaseInputController
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,9 +601,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawner
   _spawnZone: {fileID: 134288138}
-  _coalPrefab: {fileID: 2035792170552282296, guid: ed41e867fe3eac94e99e872f1a0e9ec2, type: 3}
-  _ironPrefab: {fileID: 6564163833241615860, guid: 31ec954ed9a0fe5449c543d76e7d535e, type: 3}
-  _copperPrefab: {fileID: 5512475461750879666, guid: d76a525237d950842934938ff3a256c5, type: 3}
+  _resourceConfigs:
+  - {fileID: 11400000, guid: 46c1ec2255cb4f59ad91107d13c76eab, type: 2}
+  - {fileID: 11400000, guid: 680c5a36fc364b389df3fb6966368022, type: 2}
+  - {fileID: 11400000, guid: 299c8337c1914312865a7c3ec6b5b55c, type: 2}
   _spawnAreaSize: {x: 25, y: 20}
   _spawnInterval: 2
   _initialPoolSize: 10
@@ -650,7 +664,7 @@ GameObject:
   - component: {fileID: 1108193329}
   - component: {fileID: 1108193330}
   m_Layer: 5
-  m_Name: CoalCount
+  m_Name: ResourceCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -673,7 +687,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10.000001, y: 10}
+  m_SizeDelta: {x: 14, y: 7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1108193329
 CanvasRenderer:
@@ -703,7 +717,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: "Coal: 0\nIron: 0\nCopper: 0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -730,7 +744,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1
+  m_fontSize: 1.5
   m_fontSizeBase: 1
   m_fontWeight: 400
   m_enableAutoSizing: 0
@@ -823,6 +837,7 @@ GameObject:
   - component: {fileID: 1503406462}
   - component: {fileID: 1503406463}
   - component: {fileID: 1503406464}
+  - component: {fileID: 1503406465}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -839,12 +854,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1503406456}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f007415933c16f48969be8474fc03ce, type: 3}
+  m_Script: {fileID: 11500000, guid: 619f9007400a44cda65399ba5a901d2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Base
+  m_EditorClassIdentifier: Assembly-CSharp::BaseResourceCollector
   _tracker: {fileID: 1039685110}
   _spawner: {fileID: 936669236}
-  _mapCollider: {fileID: 1808559506}
 --- !u!114 &1503406462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -872,7 +886,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85c8c0c835294d98b82345aef9ab6a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseUnitManager
-  _tracker: {fileID: 1039685110}
   _unitPrefab: {fileID: 1291733002441883443, guid: 4568be61aa77c9b4b8868d2085197692, type: 3}
   _startingUnitsCount: 3
 --- !u!114 &1503406464
@@ -887,6 +900,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ab6a22e39d4b4d9d4db002ee5640e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseResourceStorage
+--- !u!114 &1503406465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1503406456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48dd5d9bb03e407eaaa79f20d6fce57a, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: Assembly-CSharp::BaseExpansionController
+  _mapCollider: {fileID: 1808559506}
 --- !u!65 &1503406458
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1127,7 +1153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da89d0cb21444cb4a832cb56821dbcc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceUI
-  _base: {fileID: 1503406457}
+  _storage: {fileID: 1503406464}
   _label: {fileID: 1108193330}
 --- !u!114 &2146698679
 MonoBehaviour:

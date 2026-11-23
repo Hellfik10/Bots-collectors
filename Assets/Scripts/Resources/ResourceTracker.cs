@@ -41,11 +41,14 @@ public class ResourceTracker : MonoBehaviour
         return resource;
     }
 
-    public void MarkAsCollected(Resource resource)
+    public void RemoveBusyResource(Resource resource)
     {
-        if (resource == null) return;
+        if (resource == null)
+        {
+            return;
+        }
 
-        if (!_busyResources.Remove(resource))
+        if (_busyResources.Remove(resource) == false)
         {
             Debug.LogWarning($"[ResourceTracker] Ресурс {resource.name} не найден в списке занятых");
         }
